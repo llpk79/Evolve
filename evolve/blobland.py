@@ -37,20 +37,20 @@ class Blobland:
         Save data post culling.
         """
         keepers = False
-        if SCENARIO == 'interior':
+        if SCENARIO == "interior":
             keepers = {
                 blob.pos: blob
                 for blob in self.blobs.values()
                 if blob.pos[0] in range(SAFE_ZONE_SIZE, WORLD_SIZE - SAFE_ZONE_SIZE + 1)
                    and blob.pos[1] in range(SAFE_ZONE_SIZE, WORLD_SIZE - SAFE_ZONE_SIZE + 1)
             }
-        if SCENARIO == 'bottom':
+        if SCENARIO == "bottom":
             keepers = {
                 blob.pos: blob
                 for blob in self.blobs.values()
                 if blob.pos[0] in range(SAFE_ZONE_SIZE + 1)
             }
-        if SCENARIO == 'top':
+        if SCENARIO == "top":
             keepers = {
                 blob.pos: blob
                 for blob in self.blobs.values()
@@ -67,14 +67,14 @@ class Blobland:
                 blob.pos: blob
                 for blob in self.blobs.values()
                 if blob.pos[0] in range(SAFE_ZONE_SIZE + 1)
-                   and blob.pos[1] in range(SAFE_ZONE_SIZE + 1)
+                and blob.pos[1] in range(SAFE_ZONE_SIZE + 1)
             }
         if SCENARIO == "sides":
             keepers = {
                 blob.pos: blob
                 for blob in self.blobs.values()
                 if blob.pos[1] in range(SAFE_ZONE_SIZE + 1)
-                   or blob.pos[1] in range(WORLD_SIZE - SAFE_ZONE_SIZE, WORLD_SIZE + 1)
+                or blob.pos[1] in range(WORLD_SIZE - SAFE_ZONE_SIZE, WORLD_SIZE + 1)
             }
         if SCENARIO == "right_side":
             keepers = {
@@ -150,7 +150,7 @@ class Blobland:
             self.data["x"].append(blob.pos[1])
             self.data["y"].append(blob.pos[0])
             self.data["genome"].append(int(blob.genome, base=2))
-            self.data['string_genome'].append(str(int(blob.genome, base=2)))
+            self.data["string_genome"].append(str(int(blob.genome, base=2)))
 
     def animate_epoch(self, epoch: int) -> None:
         """Create animated scatter plot of epoch steps and histogram of genomes."""
@@ -161,7 +161,7 @@ class Blobland:
             x="x",
             y="y",
             animation_frame="step",
-            color='string_genome',
+            color="string_genome",
             range_x=[-1, WORLD_SIZE + 1],
             range_y=[-1, WORLD_SIZE + 1],
             height=800,
@@ -169,56 +169,56 @@ class Blobland:
             title=f"Epoch {epoch}",
             color_discrete_sequence=px.colors.qualitative.Antique,
         )
-        if SCENARIO == 'interior':
+        if SCENARIO == "interior":
             scatter.add_shape(
-                type='line',
+                type="line",
                 x0=SAFE_ZONE_SIZE,
                 y0=SAFE_ZONE_SIZE,
                 x1=SAFE_ZONE_SIZE,
                 y1=WORLD_SIZE - SAFE_ZONE_SIZE,
-                line=dict(width=1, dash='solid'),
+                line=dict(width=1, dash="solid"),
             )
             scatter.add_shape(
-                type='line',
+                type="line",
                 x0=SAFE_ZONE_SIZE,
                 y0=WORLD_SIZE - SAFE_ZONE_SIZE,
                 x1=WORLD_SIZE - SAFE_ZONE_SIZE,
                 y1=WORLD_SIZE - SAFE_ZONE_SIZE,
-                line=dict(width=1, dash='solid'),
+                line=dict(width=1, dash="solid"),
             )
             scatter.add_shape(
-                type='line',
+                type="line",
                 x0=WORLD_SIZE - SAFE_ZONE_SIZE,
                 y0=WORLD_SIZE - SAFE_ZONE_SIZE,
                 x1=WORLD_SIZE - SAFE_ZONE_SIZE,
                 y1=SAFE_ZONE_SIZE,
-                line=dict(width=1, dash='solid'),
+                line=dict(width=1, dash="solid"),
             )
             scatter.add_shape(
-                type='line',
+                type="line",
                 x0=SAFE_ZONE_SIZE,
                 y0=SAFE_ZONE_SIZE,
                 x1=WORLD_SIZE - SAFE_ZONE_SIZE,
                 y1=SAFE_ZONE_SIZE,
-                line=dict(width=1, dash='solid'),
+                line=dict(width=1, dash="solid"),
             )
-        if SCENARIO == 'bottom':
+        if SCENARIO == "bottom":
             scatter.add_shape(
-                type='line',
+                type="line",
                 x0=0,
                 y0=SAFE_ZONE_SIZE,
                 x1=WORLD_SIZE,
                 y1=SAFE_ZONE_SIZE,
-                line=dict(width=1, dash='solid'),
+                line=dict(width=1, dash="solid"),
             )
-        if SCENARIO == 'top':
+        if SCENARIO == "top":
             scatter.add_shape(
-                type='line',
+                type="line",
                 x0=0,
                 y0=WORLD_SIZE - SAFE_ZONE_SIZE,
                 x1=WORLD_SIZE,
                 y1=WORLD_SIZE - SAFE_ZONE_SIZE,
-                line=dict(width=1, dash='solid'),
+                line=dict(width=1, dash="solid"),
             )
         if SCENARIO == "sides":
             scatter.add_shape(
@@ -276,11 +276,11 @@ class Blobland:
         scatter.update_yaxes(showgrid=False, showticklabels=False, visible=False)
         scatter.show()
         hist = px.histogram(
-            data_frame=df[(df["epoch"] == epoch) & (df['step'] == df['step'].max())],
+            data_frame=df[(df["epoch"] == epoch) & (df["step"] == df["step"].max())],
             x="string_genome",
             y="string_genome",
             color="string_genome",
-            nbins=df['string_genome'].nunique(),
+            nbins=df["string_genome"].nunique(),
             histfunc="count",
             height=400,
             width=800,

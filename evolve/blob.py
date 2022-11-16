@@ -151,9 +151,9 @@ class Blob:
         """Ensure position is free and within Blobland."""
         row, col = position
         return (
-                not (row, col) in self.blobland.blobs
-                and 0 <= row < WORLD_SIZE
-                and 0 <= col < WORLD_SIZE
+            not (row, col) in self.blobland.blobs
+            and 0 <= row < WORLD_SIZE
+            and 0 <= col < WORLD_SIZE
         )
 
     def look(self, row_range: range, column_range: range) -> float:
