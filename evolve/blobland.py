@@ -1,8 +1,8 @@
 import pandas as pd
 import plotly.express as px
-from settings import *
+from .settings import *
 
-from blob import Blob
+from .blob import Blob
 from collections import defaultdict
 from datetime import datetime
 from random import randint, sample
@@ -132,12 +132,14 @@ class Blobland:
             self.add_blob(Blob(blobland=self, genome=randint(0, 255)))
 
         if self.population >= 2 * INITIAL_POPULATION:
-            # self.blobs = dict(
-            #     sample(list(self.blobs.items()), INITIAL_POPULATION * 2)  # Equal opportunity
-            # )
-            self.blobs = dict(
-                list(self.blobs.items())[: INITIAL_POPULATION * 2]  # Genetic Domination
-            )
+            if OVER_POPULATION_STRATEGY == 'random_sample':
+                self.blobs = dict(
+                    sample(list(self.blobs.items()), INITIAL_POPULATION * 2)  # Equal opportunity
+                )
+            if OVER_POPULATION_STRATEGY == 'keep_oldest':
+                self.blobs = dict(
+                    list(self.blobs.items())[: INITIAL_POPULATION * 2]  # Genetic Domination
+                )
         self.population = len(self.blobs)
 
     def cleanup_epoch(self, epoch: int, step: int, start_time: datetime) -> None:
