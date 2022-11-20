@@ -1,6 +1,6 @@
 from random import randint, random
-from settings import *
-from brain import Brain
+from .settings import *
+from .brain import Brain
 
 
 class Blob:
