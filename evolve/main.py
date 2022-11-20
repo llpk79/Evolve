@@ -3,7 +3,7 @@ from blobland import Blobland
 from datetime import datetime
 
 
-def main():
+def main() -> Blobland:
     """Create a Blobland of Blobs and perform a simulation."""
     try:
         blobland = Blobland()

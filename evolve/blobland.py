@@ -24,6 +24,7 @@ class Blobland:
 
     def add_blob(self, blob: Blob) -> None:
         """Inhabitants are tracked by position in a dictionary.
+
         Increment population
         """
         self.blobs[blob.pos] = blob
@@ -33,16 +34,18 @@ class Blobland:
 
     def cull(self, epoch, step) -> None:
         """Remove Blobs not in the safe zone determined by SCENARIO in settings.py.
+
         Reset population.
         Save data post culling.
         """
-        keepers = False
+        keepers = {}
         if SCENARIO == "interior":
             keepers = {
                 blob.pos: blob
                 for blob in self.blobs.values()
                 if blob.pos[0] in range(SAFE_ZONE_SIZE, WORLD_SIZE - SAFE_ZONE_SIZE + 1)
-                   and blob.pos[1] in range(SAFE_ZONE_SIZE, WORLD_SIZE - SAFE_ZONE_SIZE + 1)
+                and blob.pos[1]
+                in range(SAFE_ZONE_SIZE, WORLD_SIZE - SAFE_ZONE_SIZE + 1)
             }
         if SCENARIO == "bottom":
             keepers = {
@@ -82,8 +85,6 @@ class Blobland:
                 for blob in self.blobs.values()
                 if blob.pos[1] in range(WORLD_SIZE - SAFE_ZONE_SIZE, WORLD_SIZE + 1)
             }
-        if not keepers:
-            raise ValueError(f"Check SCENARIO in settings.py. You entered {SCENARIO}.")
         self.population = len(keepers)
         self.blobs.clear()
         self.blobs = keepers
@@ -92,16 +93,16 @@ class Blobland:
 
     def update(self, epoch: int = 0, start_time: datetime = None) -> None:
         """Reset population.
-        If epoch end:
-            - increment survival count
-            - allow each Blob to mate
-            - spawn each Blob
-            - print epoch stats to stdout.
+
+        increment survival count
+        allow each Blob to mate
+        spawn each Blob
+        print epoch stats to stdout
         """
         end_time = datetime.now()
         self.population = len(self.blobs)
         repeat_survivors, ultimate_survivor = 0, 0
-        ultimate_fucker, mated = 0, 0
+        ultimate_fucker, mated, mutants = 0, 0, 0
         gene_pool = set()
         blobs = list(self.blobs.values())
         for blob in blobs:
@@ -112,21 +113,23 @@ class Blobland:
             repeat_survivors += blob.survived > 1
             ultimate_survivor = max(ultimate_survivor, blob.survived)
             ultimate_fucker = max(ultimate_fucker, blob.mated)
+            mutants += blob.mutant
             gene_pool.add(blob.genome)
         print(
             f"EPOCH: {epoch}\tepoch time {(end_time - start_time).seconds} seconds\nsurviving population {self.population}\tpeak population {self.peak}\tepoch peak {self.epoch_peak}\tsurviving proportion {self.population / self.epoch_peak:.2f}"
         )
         print(
-            f"repeats {repeat_survivors}\ttotal mated {mated}\tsurviving gene pool {len(gene_pool)}\noldest survivor {ultimate_survivor}\tUltimate fucker {ultimate_fucker}\n"
+            f"repeats {repeat_survivors}\ttotal mated {mated}\tsurviving gene pool {len(gene_pool)}\noldest survivor {ultimate_survivor}\tUltimate fucker {ultimate_fucker}\ttotal mutants {mutants}\n"
         )
 
-    def manage_population(self):
+    def manage_population(self) -> None:
         """Repopulate up to initial population setting.
+
         If population has more than doubled initial setting, cull to doubled.
         Option to slice population keeping the oldest members, or keep a random selection.
         """
         for _ in range(INITIAL_POPULATION - self.population):
-            self.add_blob(Blob(self, randint(0, 255)))
+            self.add_blob(Blob(blobland=self, genome=randint(0, 255)))
 
         if self.population >= 2 * INITIAL_POPULATION:
             # self.blobs = dict(
