@@ -1,5 +1,5 @@
-from settings import *
-from blobland import Blobland
+from .settings import *
+from .blobland import Blobland
 from datetime import datetime
 
 
@@ -7,11 +7,11 @@ def main() -> Blobland:
     """Create a Blobland of Blobs and perform a simulation."""
     try:
         blobland = Blobland()
-        for epoch in range(1, WORLD_EPOCHS + 1):
+        for epoch in range(1, GENERATIONS + 1):
             blobland.epoch_peak = 0
             blobland.manage_population()
             epoch_start_time = datetime.now()
-            for step in range(1, STEPS_PER_WORLD_EPOCH + 1):
+            for step in range(1, STEPS_PER_WORLD_GENERATION + 1):
                 blobs = list(blobland.blobs.values())
                 for blob in blobs:
                     if step % STEPS_BETWEEN_TRAINING == 0:

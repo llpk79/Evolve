@@ -1,5 +1,5 @@
 import numpy as np
-from settings import LEARNING_EPOCHS, LEARNING_RATE
+from .settings import LEARNING_EPOCHS, LEARNING_RATE
 
 
 class Brain(object):
