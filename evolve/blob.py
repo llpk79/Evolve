@@ -1,6 +1,6 @@
 from random import randint, random
-from settings import *
-from brain import Brain
+from .settings import *
+from .brain import Brain
 
 
 class Blob:
@@ -13,7 +13,7 @@ class Blob:
 
     """
 
-    def __init__(self, blobland, genome: int, pos: tuple = None):
+    def __init__(self, blobland, genome: int, mutant: bool = False):
         self.genome = f"{genome:08b}"[:8]
         self.blobland = blobland
         self.action_map = {
@@ -32,15 +32,17 @@ class Blob:
         # self.sense_distance = int(self.genome[3:7])
         self.actions = None
         self.brain = self.create_brain()
-        self.pos = pos
+        self.pos = None
         self.survived = 0
         self.mated = 0
         self.training_inputs = None
         self.training_labels = []
+        self.mutant = mutant
         self.spawn()
 
-    def create_training_data(self):
+    def create_training_data(self) -> None:
         """Make training data for Blobs.
+        
         Labels input signals > TRAINING_INPUT_THRESHOLD as 1 else 0
         """
         self.training_inputs = [
@@ -77,20 +79,22 @@ class Blob:
             n_out=num_outputs,
         )
 
-    def find_mate(self):
+    def find_mate(self) -> None:
         """Look one square up, down, left, and right. Attempt to mate with all."""
         for up_down, left_right in zip([1, -1, 0, 0], [0, 0, 1, -1]):
             adjacent_pos = (self.pos[0] + up_down, self.pos[1] + left_right)
             if adjacent_pos in self.blobland.blobs:
                 self.mate(self.blobland.blobs[adjacent_pos])
 
-    def mate(self, other):
+    def mate(self, other) -> None:
         """Create new genome taking half from self and half from other.
 
         Mate and mutate according to settings.
+        Mutate by flipping one random bit in offspring's genome.
         """
         chance = random()
         if self.survived and chance < MATING_CHANCE:
+            mutant = False
             egg = self.genome[:4]
             sperm = other.genome[4:]
             fertilized = int(egg + sperm, base=2)
@@ -98,8 +102,11 @@ class Blob:
                 # print('Mutation!!')
                 mutate = 1 << randint(0, 8)
                 fertilized ^= mutate
+                mutant = True
             self.mated += 1
-            self.blobland.add_blob(Blob(self.blobland, genome=fertilized))
+            self.blobland.add_blob(
+                Blob(self.blobland, genome=fertilized, mutant=mutant)
+            )
 
     def spawn(self) -> None:
         """ Place this Blob in a random free space."""
@@ -110,6 +117,12 @@ class Blob:
                 break
 
     def update_position(self, pos: tuple) -> None:
+        """Update position in blobland.blobs.
+
+        Check if current position is in blobland.blobs, if so delete.
+        Change self.pos to updated pos.
+        Add self to blobland.blobs with updated self.pos.
+        """
         if self.pos in self.blobland.blobs:
             del self.blobland.blobs[self.pos]
         self.pos = pos
@@ -192,7 +205,7 @@ class Blob:
         column_range = range(SENSE_DISTANCE)
         return self.look(row_range, column_range)
 
-    def update(self):
+    def update(self) -> None:
         """Map sense input signals to actions."""
         input_signals = [sense() for sense in self.senses]
         if input_signals:
@@ -200,7 +213,7 @@ class Blob:
             for output, output_signal in zip(self.actions, output_signals):
                 output(output_signal)
 
-    def train(self):
+    def train(self) -> None:
         """Train all surviving Blobs with any senses plus any actions."""
         if self.survived and self.senses and self.brain.n_out:
             self.training_inputs, self.training_labels = [], []

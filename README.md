@@ -12,6 +12,10 @@ Blobs only find each other and mate. They have no other abilities or drives.
 
 We create a square grid, Blobland, to host a population Blobs. After so many steps of moving around and mating, all Blobs not in the safe zone are killed. The remaining are dispersed throughout Blobland, and new Blobs are added to replenish the population to the initial setting.
 
-As each epoch completes, statistics about survival and mating opportunities are printed. 
+As each generation completes, statistics about survival, mating and genetic diversity are printed. Expect population to rise and gene pool to shrink over successive generations. 
 
-After the chosen number of epoch completes an animation of each epoch may be viewed, along with a histogram relating genetic diversity.
+After the chosen number of generations completes an animation of each generation may be viewed, along with a histogram relating genetic diversity.
+
+Use the slider, rather than the play button, for smooth animations.
+
+**If a simulation seems to be going nowhere, you can stop with the stop button above and still view an animation of completed epochs**
