@@ -132,17 +132,19 @@ class Blobland:
             self.add_blob(Blob(blobland=self, genome=randint(0, 255)))
 
         if self.population >= 2 * INITIAL_POPULATION:
-            if OVER_POPULATION_STRATEGY == 'random_sample':
+            if OVER_POPULATION_STRATEGY == "random_sample":
                 self.blobs = dict(
                     sample(list(self.blobs.items()), INITIAL_POPULATION * 2)  # Equal opportunity
                 )
-            if OVER_POPULATION_STRATEGY == 'keep_oldest':
+            if OVER_POPULATION_STRATEGY == "keep_oldest":
                 self.blobs = dict(
                     list(self.blobs.items())[: INITIAL_POPULATION * 2]  # Genetic Domination
                 )
         self.population = len(self.blobs)
 
-    def cleanup_generation(self, generation: int, step: int, start_time: datetime) -> None:
+    def cleanup_generation(
+        self, generation: int, step: int, start_time: datetime
+    ) -> None:
         """Call end of generation functions."""
         self.cull(generation, step)
         self.update(generation, start_time=start_time)
@@ -280,7 +282,9 @@ class Blobland:
         scatter.update_xaxes(showgrid=False, showticklabels=False, visible=False)
         scatter.update_yaxes(showgrid=False, showticklabels=False, visible=False)
         scatter.show()
-        hist_df = df[(df["generation"] == generation) & (df["step"] == df["step"].max())]
+        hist_df = df[
+            (df["generation"] == generation) & (df["step"] == df["step"].max())
+        ]
         hist = px.histogram(
             data_frame=hist_df,
             x="string_genome",
